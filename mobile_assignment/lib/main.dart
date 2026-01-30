@@ -16,7 +16,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // Initialize GetIt
   await di.init();
-  initNotification();
+  _initNotifications();
 
   // Register Repo/Cubit manually in DI for now to avoid errors in step 3
   if (!di.sl.isRegistered<EmployeeRepository>()) {
@@ -29,12 +29,23 @@ void main() async {
   runApp(const MyApp());
 }
 
-Future<void> initNotification() async {
+Future<void> _initNotifications() async {
+  // Android Settings
   const AndroidInitializationSettings initializationSettingsAndroid =
       AndroidInitializationSettings('@mipmap/ic_launcher');
 
+  // iOS Settings
+  const DarwinInitializationSettings initializationSettingsDarwin =
+      DarwinInitializationSettings(
+        requestSoundPermission: true,
+        requestBadgePermission: true,
+        requestAlertPermission: true,
+      );
+
+  // Combine
   const InitializationSettings initializationSettings = InitializationSettings(
     android: initializationSettingsAndroid,
+    iOS: initializationSettingsDarwin,
   );
 
   await flutterLocalNotificationsPlugin.initialize(initializationSettings);

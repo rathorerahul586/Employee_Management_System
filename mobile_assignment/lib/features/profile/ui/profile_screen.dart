@@ -82,6 +82,7 @@ class _ProfileView extends StatelessWidget {
             _buildInfoTile(Icons.disc_full_outlined, "Meal Management"),
             _buildInfoTile(Icons.people_alt_outlined, "Employees"),
             _logoutButton(context),
+            SizedBox(height: 100),
           ],
         ),
       ),

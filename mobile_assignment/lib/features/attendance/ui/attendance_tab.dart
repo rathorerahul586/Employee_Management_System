@@ -40,6 +40,34 @@ class _AttendanceTabState extends State<AttendanceTab>
       vsync: this,
       duration: const Duration(seconds: 2),
     )..repeat(reverse: true);
+
+    _requestPermissions();
+  }
+
+  Future<void> _requestPermissions() async {
+    final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
+        flutterLocalNotificationsPlugin
+            .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin
+            >();
+
+    if (androidImplementation != null) {
+      await androidImplementation.requestNotificationsPermission();
+    }
+
+    final IOSFlutterLocalNotificationsPlugin? iosImplementation =
+        flutterLocalNotificationsPlugin
+            .resolvePlatformSpecificImplementation<
+              IOSFlutterLocalNotificationsPlugin
+            >();
+
+    if (iosImplementation != null) {
+      await iosImplementation.requestPermissions(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
+    }
   }
 
   @override
@@ -51,7 +79,7 @@ class _AttendanceTabState extends State<AttendanceTab>
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Padding(
+      child: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -120,114 +148,112 @@ class _AttendanceTabState extends State<AttendanceTab>
   }
 
   Widget _buildAnimatedPunchButton() {
-    return Expanded(
-      child: Container(
-        padding: EdgeInsets.all(24),
-        decoration: BoxDecoration(
-          color: const Color(0xFF252836),
-          borderRadius: BorderRadius.circular(24),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _buildCurrentTime(),
+    return Container(
+      padding: EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: const Color(0xFF252836),
+        borderRadius: BorderRadius.circular(24),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _buildCurrentTime(),
 
-            const SizedBox(height: 24),
+          const SizedBox(height: 24),
 
-            Stack(
-              alignment: Alignment.center,
-              children: [
-                // Outer Glow
-                AnimatedBuilder(
-                  animation: _controller,
-                  builder: (context, child) {
-                    return Container(
-                      height: 180,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: AppTheme.primaryPurple.withOpacity(
-                          0.1 - (_controller.value * 0.1),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-                // Inner Glow
-                Container(
-                  width: 160,
-                  height: 160,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: AppTheme.primaryPurple.withAlpha(90),
-                  ),
-                ),
-                // The Button
-                GestureDetector(
-                  onTap: () {
-                    context.read<AttendanceCubit>().punchInOut();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Punched Successfully!")),
-                    );
-                    _showNotification();
-                  },
-                  child: Container(
-                    width: 130,
-                    height: 130,
-                    decoration: const BoxDecoration(
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              // Outer Glow
+              AnimatedBuilder(
+                animation: _controller,
+                builder: (context, child) {
+                  return Container(
+                    height: 180,
+                    decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      gradient: LinearGradient(
-                        colors: [Color(0xFF8B7EF8), Color(0xFF6C5DD3)],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
+                      color: AppTheme.primaryPurple.withOpacity(
+                        0.1 - (_controller.value * 0.1),
                       ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Color(0xFF6C5DD3),
-                          blurRadius: 20,
-                          spreadRadius: 1,
-                        ),
-                      ],
                     ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(
-                          Icons.touch_app_outlined,
-                          color: Colors.white,
-                          size: 40,
-                        ),
-                        const SizedBox(height: 8),
-                        BlocBuilder<AttendanceCubit, AttendanceCubitState>(
-                          builder: (context, state) {
-                            String buttonText =
-                                state.checkinsTime == null
-                                    ? "PUNCH IN"
-                                    : state.checkoutTime == null
-                                    ? "PUNCH OUT"
-                                    : "RESET";
-                            return Text(
-                              buttonText,
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 12,
-                              ),
-                            );
-                          },
-                        ),
-                      ],
+                  );
+                },
+              ),
+              // Inner Glow
+              Container(
+                width: 160,
+                height: 160,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppTheme.primaryPurple.withAlpha(90),
+                ),
+              ),
+              // The Button
+              GestureDetector(
+                onTap: () {
+                  context.read<AttendanceCubit>().punchInOut();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Punched Successfully!")),
+                  );
+                  _showNotification();
+                },
+                child: Container(
+                  width: 130,
+                  height: 130,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: LinearGradient(
+                      colors: [Color(0xFF8B7EF8), Color(0xFF6C5DD3)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
                     ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Color(0xFF6C5DD3),
+                        blurRadius: 20,
+                        spreadRadius: 1,
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.touch_app_outlined,
+                        color: Colors.white,
+                        size: 40,
+                      ),
+                      const SizedBox(height: 8),
+                      BlocBuilder<AttendanceCubit, AttendanceCubitState>(
+                        builder: (context, state) {
+                          String buttonText =
+                              state.checkinsTime == null
+                                  ? "PUNCH IN"
+                                  : state.checkoutTime == null
+                                  ? "PUNCH OUT"
+                                  : "RESET";
+                          return Text(
+                            buttonText,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                            ),
+                          );
+                        },
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
-            const SizedBox(height: 24),
-            Text(
-              "Location: You are in Office",
-              style: TextStyle(color: Colors.grey, fontSize: 12),
-            ),
-          ],
-        ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+          Text(
+            "Location: You are in Office",
+            style: TextStyle(color: Colors.grey, fontSize: 12),
+          ),
+        ],
       ),
     );
   }
