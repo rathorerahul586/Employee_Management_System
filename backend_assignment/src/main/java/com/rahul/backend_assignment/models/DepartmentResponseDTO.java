@@ -1,21 +1,15 @@
 package com.rahul.backend_assignment.models;
 
-import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
-@Entity
-public class Department {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+@Builder
+public class DepartmentResponseDTO {
     private String id;
-
     private String name;
     private String location;
-
-    @OneToMany(mappedBy = "department", cascade = CascadeType.ALL)
     private List<Employee> employees;
 }
