@@ -4,7 +4,7 @@ import com.lowagie.text.*;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
-import com.rahul.backend_assignment.models.DepartmentResponseDTO;
+import com.rahul.backend_assignment.models.DepartmentDTO;
 import com.rahul.backend_assignment.models.Employee;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +15,7 @@ import java.util.List;
 @Service
 public class PdfService {
 
-    public ByteArrayInputStream generateEmployeeReport(List<DepartmentResponseDTO> departments) {
+    public ByteArrayInputStream generateEmployeeReport(List<DepartmentDTO> departments) {
         Document document = new Document();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
@@ -24,7 +24,7 @@ public class PdfService {
             document.open();
 
             // Loop through each department
-            for (DepartmentResponseDTO dept : departments) {
+            for (DepartmentDTO dept : departments) {
                 // Department Header
                 Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 18);
                 Paragraph title = new Paragraph("Department: " + dept.getName(), titleFont);

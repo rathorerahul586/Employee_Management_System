@@ -1,7 +1,6 @@
 package com.rahul.backend_assignment.controller;
 
-import com.rahul.backend_assignment.models.EmployeeRequestDTO;
-import com.rahul.backend_assignment.models.EmployeeResponseDTO;
+import com.rahul.backend_assignment.models.EmployeeDTO;
 import com.rahul.backend_assignment.models.common.ApiRequest;
 import com.rahul.backend_assignment.models.common.ApiResponse;
 import com.rahul.backend_assignment.service.EmployeeService;
@@ -22,7 +21,7 @@ public class EmployeeController {
 
     // GET ALL
     @GetMapping
-    public ResponseEntity<ApiResponse<List<EmployeeResponseDTO>>> getAllEmployees() {
+    public ResponseEntity<ApiResponse<List<EmployeeDTO>>> getAllEmployees() {
         return ResponseEntity.ok(
                 ApiResponse.success(
                         employeeService.getAllEmployees(),
@@ -33,7 +32,7 @@ public class EmployeeController {
 
     // GET ALL By Department id
     @GetMapping("departments/{id}")
-    public ResponseEntity<ApiResponse<List<EmployeeResponseDTO>>> getAllEmployeesByDept(@PathVariable String id) {
+    public ResponseEntity<ApiResponse<List<EmployeeDTO>>> getAllEmployeesByDept(@PathVariable String id) {
         return ResponseEntity.ok(
                 ApiResponse.success(
                         employeeService.getEmployeesByDept(id),
@@ -45,13 +44,13 @@ public class EmployeeController {
 
     // CREATE (Wraps Request & Response)
     @PostMapping
-    public ResponseEntity<ApiResponse<EmployeeResponseDTO>> createEmployee(
-            @RequestBody ApiRequest<EmployeeRequestDTO> requestWrapper) {
+    public ResponseEntity<ApiResponse<EmployeeDTO>> createEmployee(
+            @RequestBody ApiRequest<EmployeeDTO> requestWrapper) {
 
         // Extract payload from Generic Request
-        EmployeeRequestDTO requestData = requestWrapper.getPayload();
+        EmployeeDTO requestData = requestWrapper.getPayload();
 
-        EmployeeResponseDTO newEmployee = employeeService.createEmployee(requestData);
+        EmployeeDTO newEmployee = employeeService.createEmployee(requestData);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 ApiResponse.success(newEmployee, "Employee created successfully")
@@ -60,11 +59,11 @@ public class EmployeeController {
 
     // UPDATE
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<EmployeeResponseDTO>> updateEmployee(
+    public ResponseEntity<ApiResponse<EmployeeDTO>> updateEmployee(
             @PathVariable String id,
-            @RequestBody ApiRequest<EmployeeRequestDTO> requestWrapper) {
+            @RequestBody ApiRequest<EmployeeDTO> requestWrapper) {
 
-        EmployeeResponseDTO updatedEmployee = employeeService.updateEmployee(id, requestWrapper.getPayload());
+        EmployeeDTO updatedEmployee = employeeService.updateEmployee(id, requestWrapper.getPayload());
 
         return ResponseEntity.ok(
                 ApiResponse.success(updatedEmployee, "Employee updated successfully")

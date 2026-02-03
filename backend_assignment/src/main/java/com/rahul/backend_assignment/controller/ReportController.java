@@ -1,6 +1,6 @@
 package com.rahul.backend_assignment.controller;
 
-import com.rahul.backend_assignment.models.DepartmentResponseDTO;
+import com.rahul.backend_assignment.models.DepartmentDTO;
 import com.rahul.backend_assignment.service.DepartmentService;
 import com.rahul.backend_assignment.service.PdfService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +27,7 @@ public class ReportController {
     @GetMapping("/reports/employees")
     public ResponseEntity<InputStreamResource> downloadReport() {
         // 1. Fetch Data
-        List<DepartmentResponseDTO> departments = service.getAllDepartments();
+        List<DepartmentDTO> departments = service.getAllDepartments();
 
         // 2. Generate PDF
         ByteArrayInputStream pdf = pdfService.generateEmployeeReport(departments);

@@ -3,8 +3,7 @@ package com.rahul.backend_assignment.service;
 import com.rahul.backend_assignment.exception.ResourceNotFoundException;
 import com.rahul.backend_assignment.models.Department;
 import com.rahul.backend_assignment.models.Employee;
-import com.rahul.backend_assignment.models.EmployeeRequestDTO;
-import com.rahul.backend_assignment.models.EmployeeResponseDTO;
+import com.rahul.backend_assignment.models.EmployeeDTO;
 import com.rahul.backend_assignment.repository.DepartmentRepository;
 import com.rahul.backend_assignment.repository.EmployeeRepository;
 import com.rahul.backend_assignment.utils.AppConstants;
@@ -23,13 +22,13 @@ public class EmployeeService {
     private final DepartmentRepository deptRepo;
 
     // READ: Return DTOs, not Entities
-    public List<EmployeeResponseDTO> getAllEmployees() {
+    public List<EmployeeDTO> getAllEmployees() {
         return empRepo.findAll().stream()
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
     }
 
-    public List<EmployeeResponseDTO> getEmployeesByDept(String deptId) {
+    public List<EmployeeDTO> getEmployeesByDept(String deptId) {
         return empRepo.findByDepartmentId(deptId).stream()
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
@@ -37,7 +36,7 @@ public class EmployeeService {
 
     // WRITE: Accept DTO, Return DTO
     @Transactional
-    public EmployeeResponseDTO createEmployee(EmployeeRequestDTO request) {
+    public EmployeeDTO createEmployee(EmployeeDTO request) {
         Department dept = deptRepo.findById(request.getDepartmentId())
                 .orElseThrow(() -> new RuntimeException(AppConstants.DEPT_NOT_FOUND + request.getDepartmentId()));
 
@@ -54,7 +53,7 @@ public class EmployeeService {
     }
 
     @Transactional
-    public EmployeeResponseDTO updateEmployee(String empId, EmployeeRequestDTO request) {
+    public EmployeeDTO updateEmployee(String empId, EmployeeDTO request) {
         Employee emp = empRepo.findById(empId)
                 .orElseThrow(() -> new ResourceNotFoundException(AppConstants.EMPLOYEE_NOT_FOUND + empId));
 
@@ -81,13 +80,14 @@ public class EmployeeService {
     }
 
     // Helper: Entity -> DTO
-    private EmployeeResponseDTO mapToDTO(Employee emp) {
-        return EmployeeResponseDTO.builder()
+    private EmployeeDTO mapToDTO(Employee emp) {
+        return EmployeeDTO.builder()
                 .id(emp.getId())
                 .name(emp.getName())
                 .email(emp.getEmail())
                 .position(emp.getPosition())
                 .salary(emp.getSalary())
+                .departmentId(emp.getDepartment() != null ? emp.getDepartment().getId() : "N/A")
                 .departmentName(emp.getDepartment() != null ? emp.getDepartment().getName() : "N/A")
                 .build();
     }
