@@ -56,15 +56,34 @@ The app uses standard validation (Email Regex & Min 6 chars password). You can u
 
 ---
 
-## 🔌 API Endpoints
+## 🔌 API Endpoints & Request Structure
 
-The backend exposes the following RESTful endpoints:
+The application uses a **Standardized Request/Response Wrapper** to ensure consistent API communication and metadata tracking.
+
+### **Generic Request Format**
+For `POST` and `PUT` requests, wrap your data inside the `payload` key:
+```json
+{
+    "requestId": "uuid-string",
+    "source": "MOBILE_APP",
+    "payload": {
+        "name": "Rahul",
+        "email": "rahul@example.com",
+        "position": "SDE 2",
+        "salary": 1200000,
+        "departmentId": "dept01"
+    }
+}
+```
+
+#### The backend exposes the following RESTful endpoints:
 
 ### **Employees**
 | Method | Endpoint | Description |
 | :--- | :--- | :--- |
 | `GET` | `/api/employees` | Fetch a list of all employees. |
-| `POST` | `/api/employees` | Create a new employee (Requires JSON body). |
+| `GET` | `/api/employees/departments/{id}` | Fetch employees by Department ID. |
+| `POST` | `/api/employees` | Create a new employee (Requires ApiRequest wrapper). |
 | `GET` | `/api/employees/{id}` | Get details of a specific employee by ID. |
 | `PUT` | `/api/employees/{id}` | Update an existing employee's details. |
 | `DELETE` | `/api/employees/{id}` | Remove an employee from the database. |
@@ -73,7 +92,7 @@ The backend exposes the following RESTful endpoints:
 | Method | Endpoint | Description |
 | :--- | :--- | :--- |
 | `GET` | `/api/departments` | Fetch all departments with their employees. |
-| `POST` | `/api/departments` | Create a new department. |
+| `POST` | `/departments/{deptId}` | Fetch department by ID. |
 
 ### **Reports**
 | Method | Endpoint | Description |
@@ -89,10 +108,5 @@ The backend exposes the following RESTful endpoints:
 * **Profile:** Camera/Gallery integration for profile photos.
 * **Validation:** Login form with regex validation.
 * **Notifications:** Android 13+ Permission handling & local alerts.
-
-## 🔮 Future Improvements
-
-While the core requirements are met, the following features are planned for future updates:
-
-* **Session Persistence:** Implement `SharedPreferences` or `FlutterSecureStorage` to keep users logged in across app restarts.
-* **Centralized API Handling:** Refactor `Dio` calls to use a standardized `Result<T>` wrapper for global error handling.
+* **Standardized API:** Implementation of `ApiRequest<T>` and `ApiResponse<T>` to encapsulate metadata, status, and payload.
+* **Global Exception Handling:** Centralized `@RestControllerAdvice` to catch errors and return structured JSON responses.
