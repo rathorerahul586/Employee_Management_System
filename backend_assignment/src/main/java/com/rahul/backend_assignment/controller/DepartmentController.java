@@ -15,16 +15,15 @@ import java.util.List;
 
 
 @RestController // Tells Spring this class handles REST API requests
-@RequestMapping("/api") // Base URL for all endpoints
+@RequestMapping("/api/departments") // Base URL for all endpoints
 public class DepartmentController {
 
     @Autowired
     private DepartmentService service;
 
     // GET /departments
-    @GetMapping("/departments")
+    @GetMapping
     public ResponseEntity<ApiResponse<List<DepartmentDTO>>> getDepartments() {
-        // Wraps the list inside a key named "departments"
         List<DepartmentDTO> departments = service.getAllDepartments();
         return ResponseEntity.ok(
                 ApiResponse.success(departments, AppConstants.SUCCESS_MESSAGE)
@@ -32,7 +31,7 @@ public class DepartmentController {
     }
 
     // GET /departments/{deptId}
-    @GetMapping("/departments/{deptId}")
+    @GetMapping("/{deptId}")
     public ResponseEntity<ApiResponse<DepartmentDTO>> getDepartmentById(@PathVariable String deptId) {
         DepartmentDTO department = service.getDepartmentById(deptId);
         return ResponseEntity.ok(
