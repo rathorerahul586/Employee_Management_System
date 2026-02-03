@@ -1,7 +1,7 @@
 package com.rahul.backend_assignment.controller;
 
-import com.rahul.backend_assignment.models.Department;
-import com.rahul.backend_assignment.service.CompanyService;
+import com.rahul.backend_assignment.models.DepartmentResponseDTO;
+import com.rahul.backend_assignment.service.DepartmentService;
 import com.rahul.backend_assignment.service.PdfService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -22,12 +22,12 @@ public class ReportController {
     private PdfService pdfService; // Inject the new service
 
     @Autowired
-    private CompanyService service;
+    private DepartmentService service;
 
     @GetMapping("/reports/employees")
     public ResponseEntity<InputStreamResource> downloadReport() {
         // 1. Fetch Data
-        List<Department> departments = service.getAllDepartments();
+        List<DepartmentResponseDTO> departments = service.getAllDepartments();
 
         // 2. Generate PDF
         ByteArrayInputStream pdf = pdfService.generateEmployeeReport(departments);

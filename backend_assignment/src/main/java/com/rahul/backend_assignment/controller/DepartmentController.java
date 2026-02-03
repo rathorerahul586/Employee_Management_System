@@ -1,12 +1,14 @@
 package com.rahul.backend_assignment.controller;
 
-import com.rahul.backend_assignment.models.Employee;
-import com.rahul.backend_assignment.service.CompanyService;
+import com.rahul.backend_assignment.models.DepartmentResponseDTO;
+import com.rahul.backend_assignment.service.DepartmentService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 
@@ -15,7 +17,7 @@ import java.util.Map;
 public class DepartmentController {
 
     @Autowired
-    private CompanyService service;
+    private DepartmentService service;
 
     // GET /departments
     @GetMapping("/departments")
@@ -24,34 +26,9 @@ public class DepartmentController {
         return Collections.singletonMap("departments", service.getAllDepartments());
     }
 
-    // GET /employees
-    @GetMapping("/employees")
-    public List<Employee> getEmployees() {
-        return service.getAllEmployees();
-    }
-
-    // GET /departments/{deptId}/employees
-    @GetMapping("/departments/{deptId}/employees")
-    public List<Employee> getEmployeesByDept(@PathVariable String deptId) {
-        return service.getEmployeesByDept(deptId);
-    }
-
-    // POST /departments/{deptId}/employees (Add new)
-    @PostMapping("/departments/{deptId}/employees")
-    public Employee addEmployee(@PathVariable String deptId, @RequestBody Employee employee) {
-        return service.addEmployeeToDept(deptId, employee);
-    }
-
-    // PUT /departments/{deptId}/employees/{empId} (Update)
-    @PutMapping("/departments/{deptId}/employees/{empId}")
-    public Employee updateEmployee(@PathVariable String empId, @RequestBody Employee employee) {
-        return service.updateEmployee(empId, employee);
-    }
-
-    // 6. DELETE /departments/{deptId}/employees/{empId} (Delete)
-    @DeleteMapping("/departments/{deptId}/employees/{empId}")
-    public String deleteEmployee(@PathVariable String empId) {
-        service.deleteEmployee(empId);
-        return "Employee deleted successfully";
+    // GET /departments/{deptId}
+    @GetMapping("/departments/{deptId}")
+    public DepartmentResponseDTO getEmployeesByDept(@PathVariable String deptId) {
+        return service.getDepartmentById(deptId);
     }
 }
