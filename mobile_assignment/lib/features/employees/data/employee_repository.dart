@@ -9,7 +9,7 @@ class EmployeeRepository {
   Future<List<Department>> getDepartments() async {
     try {
       final response = await apiClient.get('/departments');
-      final List<dynamic> rawList = response.data['departments'];
+      final List<dynamic> rawList = response.data['data'];
       return rawList.map((json) => Department.fromJson(json)).toList();
     } catch (e) {
       throw Exception("Data Parse Error: $e");
